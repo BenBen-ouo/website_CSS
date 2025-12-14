@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>謝百泓的 Blog</title>
+  <meta name="description" content="謝百泓的個人作品集：關於我、工作經歷、技能、音訊、影視作品、旅行照片集與更多資訊。" />
+
+  <style>
+    /* =========================
+       Reset (Base)
+    ========================= */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; }
+    img, video { max-width: 100%; height: auto; display: block; }
+    input, button, textarea, select { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    :focus-visible { outline: 3px solid rgba(77, 162, 255, .55); outline-offset: 3px; }
+
+    /* =========================
+       CSS Variables (Crucial)
+    ========================= */
+    :root{
+      /* Colors */
+      --bg: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: #e5e7eb;
+      --surface: #f8fafc;
+      --surface-2: #f1f5f9;
+      --primary: #7db8ff;          /* light blue */
+      --primary-strong: #4da2ff;   /* slightly stronger */
+      --gray: #e9eef5;             /* light gray */
+
+      /* Typography */
+      --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+      --fs-0: 0.875rem;
+      --fs-1: 1rem;
+      --fs-2: 1.125rem;
+      --fs-3: 1.5rem;
+      --fs-4: 2.25rem;
+      --lh: 1.65;
+
+      /* Spacing */
+      --space-1: .5rem;
+      --space-2: .75rem;
+      --space-3: 1rem;
+      --space-4: 1.5rem;
+      --space-5: 2rem;
+      --space-6: 3rem;
+
+      /* Layout */
+      --container: 1100px;
+      --radius: 16px;
+      --shadow: 0 10px 25px rgba(15, 23, 42, .06);
+      --shadow-sm: 0 6px 14px rgba(15, 23, 42, .06);
+
+      /* Motion */
+      --dur: 220ms;
+      --ease: cubic-bezier(.2,.9,.2,1);
+
+      /* Nav height for offset */
+      --nav-h: 64px;
+    }
+
+    /* =========================
+       Base
+    ========================= */
+    body{
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: var(--lh);
+    }
+
+    .skip-link{
+      position: absolute;
+      left: 0; top: 0;
+      transform: translateY(-120%);
+      background: var(--text);
+      color: #fff;
+      padding: .75rem 1rem;
+      border-radius: 0 0 12px 0;
+      z-index: 9999;
+      transition: transform var(--dur) var(--ease);
+    }
+    .skip-link:focus{ transform: translateY(0); }
+
+    .container{
+      width: min(100% - 2rem, var(--container));
+      margin-inline: auto;
+    }
+
+    .muted{ color: var(--muted); }
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .35rem .7rem;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .03);
+      font-size: var(--fs-0);
+      color: var(--muted);
+    }
+
+    .divider{
+      height: 1px;
+      background: var(--line);
+      margin: var(--space-6) 0;
+    }
+
+    /* =========================
+       Header / Nav
+    ========================= */
+    header.site-header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav{
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .brand{
+      display: inline-flex;
+      align-items: center;
+      gap: .75rem;
+      min-width: 180px;
+    }
+    .brand-badge{
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background:
+        radial-gradient(120% 120% at 20% 20%, rgba(125,184,255,.9), rgba(233,238,245,.9)),
+        linear-gradient(135deg, rgba(15,23,42,.08), transparent 65%);
+      border: 1px solid rgba(15,23,42,.08);
+      box-shadow: 0 6px 18px rgba(77,162,255,.18);
+    }
+    .brand strong{ font-size: var(--fs-2); letter-spacing: .2px; }
+    .brand span{ font-size: var(--fs-0); color: var(--muted); }
+
+    nav.site-nav{
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .nav a{
+      padding: .55rem .75rem;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: var(--fs-0);
+      border: 1px solid transparent;
+      transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    }
+    .nav a:hover{
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--text);
+    }
+    .nav a[aria-current="true"]{
+      background: rgba(125,184,255,.22);
+      border-color: rgba(125,184,255,.55);
+      color: var(--text);
+    }
+
+    .nav-actions{
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      padding: .65rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .03);
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: var(--fs-0);
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+      border-color: rgba(15,23,42,.14);
+    }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(125,184,255,.9), rgba(77,162,255,.9));
+      border-color: rgba(77,162,255,.65);
+      color: #082f49;
+    }
+
+    .icon-btn{
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 999px;
+    }
+
+    /* Mobile nav toggle */
+    .menu-toggle{ display: inline-flex; }
+    .menu{
+      position: absolute;
+      left: 0; right: 0;
+      top: var(--nav-h);
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      display: none;
+    }
+    .menu[hidden]{ display: none !important; }
+    .menu-inner{
+      padding: .75rem 1rem 1rem;
+      display: grid;
+      gap: .35rem;
+    }
+    .menu a{
+      padding: .85rem 1rem;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+    }
+
+    /* =========================
+       Main Layout
+    ========================= */
+    main{
+      padding: var(--space-5) 0 var(--space-6);
+    }
+
+    .layout{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+      align-items: start;
+    }
+
+    /* =========================
+       Hero
+    ========================= */
+    .hero{
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 8px);
+      background:
+        radial-gradient(1200px 600px at 10% 0%, rgba(125,184,255,.18), transparent 55%),
+        radial-gradient(1000px 500px at 90% 30%, rgba(233,238,245,.75), transparent 60%),
+        linear-gradient(180deg, #fff, var(--surface));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-inner{
+      padding: clamp(1.25rem, 3vw, 2.25rem);
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .hero h1{
+      margin: 0;
+      font-size: clamp(1.85rem, 4.2vw, 3.1rem);
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+
+    .hero p{
+      margin: 0;
+      color: var(--muted);
+      max-width: 60ch;
+      font-size: var(--fs-2);
+    }
+
+    .hero-cta{
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      align-items: center;
+    }
+
+    .hero-meta{
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+      margin-top: .25rem;
+    }
+
+    /* =========================
+       Cards / Sections
+    ========================= */
+    section{
+      scroll-margin-top: calc(var(--nav-h) + 18px);
+    }
+
+    .section-head{
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+      margin-bottom: var(--space-3);
+    }
+
+    .section-head h2{
+      margin: 0;
+      font-size: var(--fs-3);
+      letter-spacing: -.01em;
+    }
+
+    .section-head p{
+      margin: 0;
+      color: var(--muted);
+      font-size: var(--fs-1);
+    }
+
+    .card{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .03);
+      overflow: hidden;
+    }
+    .card.pad{ padding: var(--space-4); }
+
+    /* =========================
+       Feature cards (3 columns)
+    ========================= */
+    .features{
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: 1fr;
+    }
+
+    .feature{
+      padding: var(--space-4);
+      display: grid;
+      gap: .65rem;
+      background:
+        radial-gradient(600px 240px at 20% 0%, rgba(125,184,255,.16), transparent 60%),
+        linear-gradient(180deg, #fff, var(--surface));
+    }
+    .feature h3{ margin: 0; font-size: 1.125rem; }
+    .feature p{ margin: 0; color: var(--muted); }
+    .feature .feature-icon{
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,.08);
+      background: rgba(125,184,255,.22);
+      display: inline-grid;
+      place-items: center;
+    }
+
+    /* =========================
+       About
+    ========================= */
+    .about{
+      display: grid;
+      gap: var(--space-4);
+      grid-template-columns: 1fr;
+    }
+
+    .about-media{
+      border-radius: calc(var(--radius) + 4px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .about-media img{
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .about-content{
+      display: grid;
+      gap: .9rem;
+    }
+
+    .kvs{
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    /* =========================
+       Tables
+    ========================= */
+    .table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--fs-0);
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+    }
+    .table th, .table td{
+      padding: .85rem .9rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    .table th{
+      background: var(--surface);
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      font-size: .78rem;
+    }
+    .table tr:last-child td{ border-bottom: 0; }
+
+    /* Skills with meter */
+    .skill-row{
+      display: grid;
+      grid-template-columns: 110px 1fr 60px;
+      gap: .75rem;
+      align-items: center;
+    }
+    .meter{
+      height: 10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .meter > span{
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(125,184,255,.8), rgba(77,162,255,.9));
+      border-right: 1px solid rgba(255,255,255,.45);
+      transition: width 520ms var(--ease);
+    }
+    .skill-row small{ color: var(--muted); font-weight: 700; text-align: right; }
+
+    /* =========================
+       Media (audio/video)
+    ========================= */
+    .media-grid{
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: 1fr;
+    }
+    .media-card{
+      padding: var(--space-4);
+      background: linear-gradient(180deg, #fff, var(--surface));
+    }
+    audio, video { width: 100%; border-radius: 12px; }
+
+    /* =========================
+       Gallery (responsive)
+    ========================= */
+    .gallery{
+      display: grid;
+      gap: .75rem;
+      grid-template-columns: 1fr;
+    }
+    .gallery figure{
+      margin: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .03);
+      position: relative;
+    }
+    .gallery img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      aspect-ratio: 3 / 2;
+    }
+    .gallery figcaption{
+      padding: .75rem .85rem;
+      font-size: var(--fs-0);
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+    }
+
+    /* =========================
+       Aside / Callout
+    ========================= */
+    aside .callout{
+      padding: var(--space-4);
+      background: linear-gradient(180deg, #fff, rgba(233,238,245,.65));
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .03);
+    }
+    aside h3{ margin: 0 0 .35rem; font-size: 1.05rem; }
+    aside p{ margin: 0; color: var(--muted); }
+
+    /* =========================
+       Embed / Map
+    ========================= */
+    .embed-wrap{
+      display: grid;
+      gap: var(--space-3);
+    }
+    .embed-wrap iframe, .embed-wrap embed{
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      overflow: hidden;
+      min-height: 340px;
+    }
+
+    details{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .03);
+      overflow: hidden;
+    }
+    summary{
+      cursor: pointer;
+      padding: .9rem 1rem;
+      list-style: none;
+      font-weight: 700;
+    }
+    summary::-webkit-details-marker{ display: none; }
+    details[open] summary{
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .details-body{
+      padding: .9rem 1rem;
+      color: var(--muted);
+    }
+
+    /* =========================
+       Footer
+    ========================= */
+    footer{
+      border-top: 1px solid var(--line);
+      padding: var(--space-5) 0;
+      background: linear-gradient(180deg, #fff, var(--surface));
+    }
+    .footer-inner{
+      display: grid;
+      gap: .5rem;
+      color: var(--muted);
+      font-size: var(--fs-0);
+    }
+
+    /* =========================
+       RWD (Mobile-first)
+    ========================= */
+    @media (min-width: 720px){
+      .layout{
+        grid-template-columns: 1.7fr .9fr;
+      }
+      .features{
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .about{
+        grid-template-columns: .95fr 1.05fr;
+        align-items: start;
+      }
+      .media-grid{
+        grid-template-columns: 1fr 1fr;
+      }
+      .gallery{
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .menu-toggle{ display: none; }
+      .menu{ display: none !important; }
+    }
+
+    @media (min-width: 1024px){
+      .gallery{
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+
+  <header class="site-header" role="banner">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="回到頁首">
+        <span class="brand-badge" aria-hidden="true"></span>
+        <span>
+          <strong>謝百泓</strong><br />
+          <span class="muted">Blog</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主要導覽（桌機）">
+        <a href="#about">關於我</a>
+        <a href="#experience">工作經歷</a>
+        <a href="#skills">技能</a>
+        <a href="#audio">音訊</a>
+        <a href="#video">影視</a>
+        <a href="#gallery">旅行照片</a>
+        <a href="#more">更多資訊</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn icon-btn menu-toggle" type="button" aria-label="開啟選單" aria-expanded="false" aria-controls="mobileMenu">
+          <!-- simple hamburger icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <a class="btn primary" href="#contact">Contact</a>
+      </div>
+    </div>
+
+    <!-- Mobile menu (progressive enhancement) -->
+    <div class="menu" id="mobileMenu" hidden>
+      <div class="container menu-inner" role="navigation" aria-label="主要導覽（行動裝置）">
+        <a href="#about">關於我</a>
+        <a href="#experience">工作經歷</a>
+        <a href="#skills">技能</a>
+        <a href="#audio">音訊</a>
+        <a href="#video">影視</a>
+        <a href="#gallery">旅行照片</a>
+        <a href="#more">更多資訊</a>
+        <a href="#contact">聯絡方式</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container" role="main">
+    <!-- HERO -->
+    <section class="hero" id="top" aria-labelledby="heroTitle">
+      <div class="hero-inner">
+        <div class="hero-meta">
+          <span class="pill" aria-label="身份">
+            <span aria-hidden="true">🎓</span>
+            <span>國立臺北教育大學｜資訊工程</span>
+          </span>
+          <span class="pill" aria-label="興趣">
+            <span aria-hidden="true">☝️🤓</span>
+            <span>App Dev · AI · Web</span>
+          </span>
+        </div>
+
+        <h1 id="heroTitle">用極簡的設計，呈現我的經歷與作品</h1>
+
+        <div class="hero-cta">
+          <a class="btn primary" href="#gallery">查看作品</a>
+          <a class="btn" href="#about">認識我</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider" role="separator" aria-hidden="true"></div>
+
+    <div class="layout">
+      <div>
+        <!-- ABOUT -->
+        <article id="about" aria-labelledby="aboutTitle">
+          <div class="section-head">
+            <h2 id="aboutTitle">關於我</h2>
+            <p>在這裡分享我在學習與生活中的作品與探索。</p>
+          </div>
+
+          <div class="card pad about">
+            <div class="about-media">
+              <img src="assets/images/me.png" alt="謝百泓的個人照片佔位圖" loading="lazy" />
+            </div>
+
+            <div class="about-content">
+              <div>
+                <h3 style="margin:0; font-size:1.25rem;">謝百泓</h3>
+                <p class="muted" style="margin:.2rem 0 0;">
+                  Student · Developer · Creator
+                </p>
+              </div>
+
+              <p style="margin:0;">
+                我是一位資訊工程背景的學生，正在學習 <mark>Python</mark>、<mark>C++</mark>、<mark>Dart (Flutter)</mark>、<mark>Java</mark>。
+                對 <mark>生成式 AI</mark>、<mark>App 開發</mark> 與 <mark>Web 設計</mark> 有濃厚興趣，喜歡把想法做成可展示的作品。
+              </p>
+
+              <p style="margin:0;">
+                同時我也熱愛旅遊、音樂與運動，讓技術學習不只停留在課堂，而能延伸到實作與生活。
+              </p>
+
+              <div class="kvs" aria-label="快速資訊">
+                <span class="pill"><span aria-hidden="true">📍</span><span>Taipei</span></span>
+                <span class="pill"><span aria-hidden="true">💼</span><span>Portfolio / Blog</span></span>
+                <span class="pill"><span aria-hidden="true">📬</span><span>ouo.joy1028@gmail.com</span></span>
+              </div>
+
+              <div class="hero-cta" style="margin-top:.25rem;">
+                <a class="btn primary" href="#contact">合作 / 聯絡</a>
+                <a class="btn" href="https://www.ntue.edu.tw/" target="_blank" rel="noopener noreferrer">學校官網</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+      <!-- ASIDE -->
+        <aside aria-label="補充資訊">
+        <div class="callout">
+            <h3>吃吃吃</h3>
+            <p>最近食量越來越大，也越來越喜歡吃東西。</p>
+        </div>
+
+        <div style="height: var(--space-3);"></div>
+
+        <div class="callout" id="contact">
+            <h3>聯絡方式</h3>
+            <p class="muted" style="margin:0 0 .75rem;">
+            若要把這頁變成你的正式作品集，可把內容與連結替換成真實專案與社群資訊。
+            </p>
+            <p style="margin:0;">
+            <a class="btn" href="mailto:ouo.joy1028@gmail.com" aria-label="寄信到 ouo.joy1028@gmail.com">
+                Email Me
+            </a>
+            </p>
+        </div>
+        </aside>
+    </div>
+
+    <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <!-- EXPERIENCE -->
+        <article id="experience" aria-labelledby="expTitle">
+          <div class="section-head">
+            <h2 id="expTitle">工作經歷</h2>
+            <p>以實作為導向，參與團隊協作與產品型專案。</p>
+          </div>
+
+          <div class="card pad">
+            <table class="table" aria-label="工作經歷表">
+              <thead>
+                <tr>
+                  <th scope="col">Dates</th>
+                  <th scope="col">Work</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2024</td>
+                  <td>通識課助理教授</td>
+                </tr>
+                <tr>
+                  <td>2025</td>
+                  <td>國北校務系統 App 開發成員</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <!-- SKILLS -->
+        <article id="skills" aria-labelledby="skillTitle">
+          <div class="section-head">
+            <h2 id="skillTitle">程式語言技能</h2>
+            <p>理解、實作、並能與專案整合。</p>
+          </div>
+
+          <div class="card pad" data-skill-root>
+            <div class="skill-row" style="margin-bottom:.9rem;">
+              <strong>Java</strong>
+              <div class="meter" aria-label="Java 熟練度"><span data-skill="70"></span></div>
+              <small>70%</small>
+            </div>
+            <div class="skill-row" style="margin-bottom:.9rem;">
+              <strong>C++</strong>
+              <div class="meter" aria-label="C++ 熟練度"><span data-skill="65"></span></div>
+              <small>65%</small>
+            </div>
+            <div class="skill-row" style="margin-bottom:.9rem;">
+              <strong>Dart</strong>
+              <div class="meter" aria-label="Dart 熟練度"><span data-skill="85"></span></div>
+              <small>85%</small>
+            </div>
+            <div class="skill-row">
+              <strong>Python</strong>
+              <div class="meter" aria-label="Python 熟練度"><span data-skill="65"></span></div>
+              <small>65%</small>
+            </div>
+          </div>
+        </article>
+
+        <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <!-- AUDIO + VIDEO -->
+        <section aria-labelledby="mediaTitle">
+          <div class="section-head">
+            <h2 id="mediaTitle">媒體作品</h2>
+            <p>音訊與影視內容直接嵌入展示。</p>
+          </div>
+
+          <div class="media-grid">
+            <article class="card media-card" id="audio" aria-labelledby="audioTitle">
+              <h3 id="audioTitle" style="margin:0 0 .6rem;">音訊作品</h3>
+              <p class="muted" style="margin:0 0 .9rem;">
+                將課堂音樂作品直接嵌入，支援鍵盤操作。
+              </p>
+              <audio controls preload="none">
+                <!-- 改為你的作品 -->
+                <source src="assets/audio/suno%20music.mp3" type="audio/mpeg" />
+                您的瀏覽器不支援 audio 播放。
+              </audio>
+            </article>
+
+            <article class="card media-card" id="video" aria-labelledby="videoTitle">
+              <h3 id="videoTitle" style="margin:0 0 .6rem;">影視作品預覽</h3>
+              <p class="muted" style="margin:0 0 .9rem;">
+                自己與組員做過最得意的翻拍影片作品。
+              </p>
+              <video controls preload="none">
+                <!-- 改為你的作品 -->
+                <source src="assets/video/fly%20high%20first%20part.mp4" type="video/mp4" />
+                您的瀏覽器不支援 video 播放。
+              </video>
+              <p style="margin:.9rem 0 0;">
+                <a class="btn" href="https://youtu.be/KpqsmN9yDuE?si=7KctGMRYOOAu1Pe1" target="_blank" rel="noopener noreferrer">
+                  點我看完整版
+                </a>
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <!-- GALLERY -->
+        <section id="gallery" aria-labelledby="galleryTitle">
+          <div class="section-head">
+            <h2 id="galleryTitle">旅行照片集</h2>
+          </div>
+
+          <div class="gallery" role="list">
+            <figure role="listitem">
+              <img src="assets/images/country.jpg" alt="旅行照片佔位圖：山間風景" loading="lazy" />
+            </figure>
+
+            <figure role="listitem">
+              <img src="assets/images/stars.jpg" alt="旅行照片佔位圖：星空" loading="lazy" />
+            </figure>
+
+            <figure role="listitem">
+              <img src="assets/images/blue_sea.jpg" alt="旅行照片佔位圖：藍色海洋" loading="lazy" />
+            </figure>
+
+            <figure role="listitem">
+              <img src="assets/images/red_sky.jpg" alt="旅行照片佔位圖：紅色天空" loading="lazy" />
+            </figure>
+
+            <figure role="listitem">
+              <img src="assets\images\tree.jpg" alt="旅行照片佔位圖：神木" loading="lazy" />
+            </figure>
+
+            <figure role="listitem">
+              <img src="assets/images/japan.jpg" alt="旅行照片佔位圖：日本" loading="lazy" />
+            </figure>
+            
+            <figure role="listitem">
+              <img src="assets\images\moai.jpg" alt="旅行照片佔位圖：摩埃石像" loading="lazy" />
+            </figure>
+
+            <figure role="listitem">
+              <img src="assets\images\holy_light.jpg" alt="旅行照片佔位圖：勝觀" loading="lazy" />
+            </figure>
+            
+            <figure role="listitem">
+              <img src="assets\images\shadow.jpg" alt="旅行照片佔位圖：影子" loading="lazy" />
+            </figure>
+          </div>
+        </section>
+
+        <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <!-- MORE / EMBED -->
+        <article id="more" aria-labelledby="moreTitle">
+          <div class="section-head">
+            <h2 id="moreTitle">更多資訊</h2>
+            <p>其他作品展示。</p>
+          </div>
+
+          <div class="embed-wrap">
+            <div class="card pad">
+              <h3 style="margin:0 0 .35rem;">曾經做過最瘋狂的小組辯論簡報</h3>
+              <embed src="assets/pdf/0526.pdf" type="application/pdf" />
+            </div>
+
+            <details>
+              <summary>點擊查看我所讀的校園位置</summary>
+              <div class="details-body">
+                臺北市大安區和平東路二段 134 號
+              </div>
+            </details>
+
+            <div class="card pad" aria-label="地圖區塊">
+              <iframe
+                title="國立臺北教育大學 地圖"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.2784024338266!2d121.54206247541927!3d25.02462437782254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a908a8232611%3A0xeebfb2d71a5025c7!2z5ZyL56uL6Ie65YyX5pWZ6IKy5aSn5a24!5e0!3m2!1szh-TW!2stw!4v1731827435609!5m2!1szh-TW!2stw"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+        </article>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container footer-inner">
+      <div>聯絡我：<a href="mailto:ouo.joy1028@gmail.com">ouo.joy1028@gmail.com</a></div>
+      <time datetime="2025-12-14">最後更新日期：2025年12月14日</time>
+      <div class="muted">© <span id="year"></span> Ben Hsieh. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================
+      Vanilla JS (ES6+) — 所有邏輯封裝在函數中
+    ========================================================= */
+
+    function initYear() {
+      const el = document.getElementById('year');
+      if (!el) return;
+      el.textContent = String(new Date().getFullYear());
+    }
+
+    function initMobileMenu() {
+      const toggle = document.querySelector('.menu-toggle');
+      const menu = document.getElementById('mobileMenu');
+      if (!toggle || !menu) return;
+
+      const setOpen = (open) => {
+        toggle.setAttribute('aria-expanded', String(open));
+        // 使用 hidden 屬性讓螢幕閱讀器與 CSS 一致
+        menu.hidden = !open;
+      };
+
+      toggle.addEventListener('click', () => {
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+        setOpen(!isOpen);
+      });
+
+      // 點擊選單內連結後自動收合（行動裝置常見行為）
+      menu.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (!link) return;
+        setOpen(false);
+      });
+
+      // 按 ESC 關閉選單（A11y）
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+        if (isOpen) setOpen(false);
+      });
+    }
+
+    function initSmoothScroll() {
+      // 只針對站內 hash 連結：避免干擾外部連結
+      const hashLinks = document.querySelectorAll('a[href^="#"]');
+      if (!hashLinks.length) return;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      hashLinks.forEach(a => {
+        a.addEventListener('click', (e) => {
+          const href = a.getAttribute('href');
+          if (!href || href === '#') return;
+
+          const target = document.querySelector(href);
+          if (!target) return;
+
+          // 若使用者偏好減少動態，就不做平滑捲動
+          if (prefersReduced) return;
+
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.pushState(null, '', href);
+        });
+      });
+    }
+
+    function initActiveNav() {
+      // 使用 IntersectionObserver 追蹤 section，將對應 nav link 設 aria-current
+      const desktopNav = document.querySelector('nav.site-nav');
+      if (!desktopNav) return;
+
+      const links = Array.from(desktopNav.querySelectorAll('a[href^="#"]'));
+      const map = new Map();
+      links.forEach(l => {
+        const id = l.getAttribute('href');
+        if (!id || id === '#') return;
+        const sec = document.querySelector(id);
+        if (sec) map.set(sec, l);
+      });
+
+      const clear = () => links.forEach(l => l.removeAttribute('aria-current'));
+
+      const obs = new IntersectionObserver((entries) => {
+        // 選出可視比例最高的 section 作為 active
+        const visible = entries
+          .filter(en => en.isIntersecting)
+          .sort((a, b) => (b.intersectionRatio - a.intersectionRatio))[0];
+
+        if (!visible) return;
+        const link = map.get(visible.target);
+        if (!link) return;
+
+        clear();
+        link.setAttribute('aria-current', 'true');
+      }, {
+        root: null,
+        // 讓段落進入上方一點就算 active（符合 sticky nav）
+        rootMargin: '-30% 0px -60% 0px',
+        threshold: [0.1, 0.2, 0.35, 0.5]
+      });
+
+      map.forEach((_, sec) => obs.observe(sec));
+    }
+
+    function initSkillMeters() {
+      // 複雜邏輯註解（繁中）：
+      // 1) 只在技能區塊進入視窗時才觸發動畫（避免一進頁就跑、也省資源）
+      // 2) 讀取 data-skill="數字" 設定 meter bar 寬度
+      // 3) 觸發一次就停止觀察，避免重複動畫造成分心
+      const root = document.querySelector('[data-skill-root]');
+      if (!root) return;
+
+      const bars = Array.from(root.querySelectorAll('[data-skill]'));
+      if (!bars.length) return;
+
+      const apply = () => {
+        bars.forEach(bar => {
+          const raw = bar.getAttribute('data-skill');
+          const val = Math.max(0, Math.min(100, Number(raw)));
+          bar.style.width = `${val}%`;
+        });
+      };
+
+      const obs = new IntersectionObserver((entries) => {
+        const en = entries[0];
+        if (!en || !en.isIntersecting) return;
+        apply();
+        obs.disconnect();
+      }, { threshold: 0.35 });
+
+      obs.observe(root);
+    }
+
+    function init() {
+      initYear();
+      initMobileMenu();
+      initSmoothScroll();
+      initActiveNav();
+      initSkillMeters();
+    }
+
+    init();
+  </script>
+</body>
+</html>
