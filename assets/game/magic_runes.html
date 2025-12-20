@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>魔幻符文大師 Pro</title>
+    <style>
+        /* --- 核心樣式 --- */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-gold: #ffd700;
+            --neon-red: #ff0055;
+            --bg-dark: #050510;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 50% 120%, #1a0525 10%, transparent 60%),
+                radial-gradient(circle at 20% 20%, #051020 0%, transparent 40%);
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- UI 層 --- */
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #score-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 32px;
+            font-weight: 900;
+            text-shadow: 0 0 10px var(--neon-blue);
+            font-family: monospace;
+        }
+
+        #lives-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-red);
+        }
+
+        /* --- 互動介面 --- */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 16, 0.95);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.3s ease, visibility 0.3s;
+        }
+
+        .overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .author-tag {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px var(--neon-purple);
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin: 0 0 20px 0;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(188, 19, 254, 0.5);
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .symbol-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .symbol-item {
+            color: var(--neon-gold);
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            font-family: monospace;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-shadow: 0 0 5px var(--neon-gold);
+        }
+
+        .btn {
+            background: rgba(0, 243, 255, 0.1);
+            color: #fff;
+            font-size: 24px;
+            padding: 15px 60px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--neon-blue);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            margin-top: 20px;
+            pointer-events: auto;
+        }
+
+        .btn:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 40px var(--neon-blue);
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .instructions {
+            color: #aaa;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        #damage-flash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: red;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 15;
+            transition: opacity 0.1s;
+        }
+        
+        * { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+    <div id="damage-flash"></div>
+
+    <div id="ui-layer">
+        <div id="score-container">SCORE: <span id="score">0</span></div>
+        <div id="lives-container">❤️❤️❤️❤️❤️</div>
+    </div>
+
+    <div id="menu-screen" class="overlay">
+        <div class="author-tag">作者：謝百泓</div>
+        <h1>MAGIC RUNES<br><span style="font-size: 2rem; letter-spacing: 10px; color: white; -webkit-text-fill-color: white;">PRO</span></h1>
+        <p class="instructions">
+            繪製符文消除氣球，觸發 COMBO 獲得高分！<br>
+        </p>
+        <div class="symbol-grid">
+            <div class="symbol-item">-</div>
+            <div class="symbol-item">|</div>
+            <div class="symbol-item">&gt;</div>
+            <div class="symbol-item">&lt;</div>
+            <div class="symbol-item">8</div>
+            <div class="symbol-item">v</div>
+            <div class="symbol-item">^</div>
+            <div class="symbol-item">O</div>
+            <div class="symbol-item">➿</div>
+            <div class="symbol-item">N</div>
+        </div>
+        <button class="btn" id="start-btn">開始遊戲</button>
+    </div>
+
+    <div id="game-over-screen" class="overlay hidden">
+        <h1 style="background: none; color: #ff3366; -webkit-text-fill-color: #ff3366; text-shadow: 0 0 20px red;">GAME OVER</h1>
+        <h2 style="color: white; margin-bottom: 30px;">最終分數: <span id="final-score">0</span></h2>
+        <button class="btn" id="restart-btn">再次挑戰</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const damageFlash = document.getElementById('damage-flash');
+        
+        const scoreEl = document.getElementById('score');
+        const livesEl = document.getElementById('lives-container');
+        const menuScreen = document.getElementById('menu-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const finalScoreEl = document.getElementById('final-score');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        
+        let width, height;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let gameState = 'MENU';
+        let animationId;
+        let lastTime = 0;
+        let score = 0;
+        let lives = 5;
+        let gameTime = 0;
+        
+        let balloons = [];
+        let particles = [];
+        let floatTexts = [];
+        let enemySpawnTimer = 0;
+        
+        let isDrawing = false;
+        let rawPoints = [];
+        let trail = [];
+
+        const SYMBOLS = {
+            HORIZONTAL: '-',
+            VERTICAL: '|',
+            RIGHT: '>',
+            LEFT: '<',
+            EIGHT: '8',
+            V_DOWN: 'v',
+            V_UP: '^',
+            CIRCLE: 'O',
+            LOOP: '➿',
+            N: 'N'
+        };
+
+        const SYMBOL_KEYS = Object.values(SYMBOLS);
+
+        const COLORS = {
+            [SYMBOLS.HORIZONTAL]: '#00FFFF',
+            [SYMBOLS.VERTICAL]: '#FFFFFF',
+            [SYMBOLS.RIGHT]: '#FF4500',
+            [SYMBOLS.LEFT]: '#FFD700',
+            [SYMBOLS.EIGHT]: '#FF1493',
+            [SYMBOLS.V_DOWN]: '#32CD32',
+            [SYMBOLS.V_UP]: '#9400D3',
+            [SYMBOLS.CIRCLE]: '#1E90FF',
+            [SYMBOLS.LOOP]: '#FF00FF',
+            [SYMBOLS.N]: '#00FF7F'
+        };
+
+        const dist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
+
+        function resample(points, n = 40) {
+            if (points.length < 2) return points;
+            let pathLength = 0;
+            for (let i = 1; i < points.length; i++) pathLength += dist(points[i-1], points[i]);
+            
+            const interval = pathLength / (n - 1);
+            let newPoints = [points[0]];
+            let D = 0;
+            
+            for (let i = 1; i < points.length; i++) {
+                let d = dist(points[i-1], points[i]);
+                if (D + d >= interval) {
+                    let qx = points[i-1].x + ((interval - D) / d) * (points[i].x - points[i-1].x);
+                    let qy = points[i-1].y + ((interval - D) / d) * (points[i].y - points[i-1].y);
+                    let q = {x: qx, y: qy};
+                    newPoints.push(q);
+                    points.splice(i, 0, q);
+                    D = 0;
+                } else {
+                    D += d;
+                }
+            }
+            if (newPoints.length === n - 1) newPoints.push(points[points.length - 1]);
+            return newPoints;
+        }
+
+        function recognize(rawPts) {
+            if (rawPts.length < 5) return null;
+            const pts = resample(rawPts, 64); // 提高採樣率以便精確偵測交叉
+            
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            pts.forEach(p => {
+                minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+                minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+            });
+            
+            const w = maxX - minX;
+            const h = maxY - minY;
+            const ratio = w / h;
+            const maxDim = Math.max(w, h);
+            if (maxDim < 20) return null;
+
+            const start = pts[0];
+            const end = pts[pts.length - 1];
+            const startEndDist = dist(start, end);
+            const isClosed = startEndDist < (maxDim * 0.45);
+
+            // 偵測交叉點
+            let intersectionPoints = [];
+            // 排除頭尾 10% 的點，避免起筆與終點接觸被誤判為交叉點
+            const margin = Math.floor(pts.length * 0.1);
+            for(let i = margin; i < pts.length - margin - 5; i++) {
+                for(let j = i + 10; j < pts.length - margin; j++) {
+                    if(doIntersect(pts[i], pts[i+1], pts[j], pts[j+1])) {
+                        intersectionPoints.push({
+                            x: (pts[i].x + pts[j].x) / 2,
+                            y: (pts[i].y + pts[j].y) / 2
+                        });
+                        i += 5; // 跳過鄰近點避免重複計數
+                        break;
+                    }
+                }
+            }
+
+            // ➿ (LOOP) 特殊邏輯：必須有至少兩個交叉點，且交叉點分布在左右
+            if (intersectionPoints.length >= 2) {
+                // 檢查是否有「一左一右」分佈的交叉點
+                const avgIntersectX = intersectionPoints.reduce((s, p) => s + p.x, 0) / intersectionPoints.length;
+                const hasLeft = intersectionPoints.some(p => p.x < avgIntersectX - (w * 0.05));
+                const hasRight = intersectionPoints.some(p => p.x > avgIntersectX + (w * 0.05));
+                
+                if (hasLeft && hasRight && ratio > 1.2) return SYMBOLS.LOOP;
+                return SYMBOLS.EIGHT; // 垂直分布或單點交叉多為 8
+            }
+
+            // 只有一個交叉點，判定為 8 或 圓形(若非常接近閉合)
+            if (intersectionPoints.length === 1) {
+                return (ratio > 0.5 && ratio < 2.0) ? SYMBOLS.EIGHT : SYMBOLS.LOOP;
+            }
+
+            // 無交叉但閉合的圖形判定為 O
+            if (isClosed) {
+                return SYMBOLS.CIRCLE;
+            }
+
+            // 非閉合圖形：線條與轉角判定
+            let corners = 0;
+            for(let i=5; i<pts.length-5; i+=3) {
+                const p1 = pts[i-5];
+                const p2 = pts[i];
+                const p3 = pts[i+5];
+                const a1 = Math.atan2(p1.y - p2.y, p1.x - p2.x);
+                const a2 = Math.atan2(p3.y - p2.y, p3.x - p2.x);
+                let angle = Math.abs(a1 - a2);
+                if (angle > Math.PI) angle = 2 * Math.PI - angle;
+                if (angle < 1.8) {
+                    corners++;
+                    i += 4;
+                }
+            }
+
+            if (corners === 0 || maxDim < 50) {
+                if (ratio > 2.0) return SYMBOLS.HORIZONTAL;
+                if (ratio < 0.5) return SYMBOLS.VERTICAL;
+            }
+
+            if (corners >= 2) return SYMBOLS.N;
+
+            const startY = (start.y - minY) / h;
+            const endY = (end.y - minY) / h;
+            const startX = (start.x - minX) / w;
+            const endX = (end.x - minX) / w;
+
+            if (startY < 0.6 && endY < 0.6) {
+                if (pts.some(p => (p.y - minY)/h > 0.8)) return SYMBOLS.V_DOWN;
+            }
+            if (startY > 0.4 && endY > 0.4) {
+                if (pts.some(p => (p.y - minY)/h < 0.2)) return SYMBOLS.V_UP;
+            }
+            if (startX > 0.4 && endX > 0.4) {
+                if (pts.some(p => (p.x - minX)/w < 0.2)) return SYMBOLS.LEFT;
+            }
+            if (startX < 0.6 && endX < 0.6) {
+                if (pts.some(p => (p.x - minX)/w > 0.8)) return SYMBOLS.RIGHT;
+            }
+
+            return null;
+        }
+
+        function doIntersect(p1, q1, p2, q2) {
+            function orientation(p, q, r) {
+                let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+                if (Math.abs(val) < 0.001) return 0;
+                return (val > 0) ? 1 : 2;
+            }
+            let o1 = orientation(p1, q1, p2);
+            let o2 = orientation(p1, q1, q2);
+            let o3 = orientation(p2, q2, p1);
+            let o4 = orientation(p2, q2, q1);
+            if (o1 !== o2 && o3 !== o4) return true;
+            return false;
+        }
+
+        class Balloon {
+            constructor() {
+                this.r = 18;
+                this.x = Math.random() * (width - 60) + 30;
+                this.y = -60;
+                const speedBonus = Math.min(gameTime / 30000, 8.0);
+                this.speed = 0.6 + speedBonus + Math.random() * 0.5;
+                this.symbol = SYMBOL_KEYS[Math.floor(Math.random() * SYMBOL_KEYS.length)];
+                this.color = COLORS[this.symbol];
+                this.wobble = Math.random() * Math.PI * 2;
+                this.dead = false;
+            }
+            update(dt) {
+                this.y += this.speed * (dt / 16);
+                this.wobble += 0.05;
+                this.renderX = this.x + Math.sin(this.wobble) * 10;
+                if (this.y > height + 30) {
+                    this.dead = true;
+                    takeDamage();
+                }
+            }
+            draw(ctx) {
+                const x = this.renderX; const y = this.y;
+                ctx.beginPath();
+                ctx.moveTo(x, y + this.r);
+                ctx.lineTo(x, y + this.r + 25);
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.stroke();
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                ctx.fillText('👾', x, y + this.r + 35);
+                ctx.fillStyle = this.color + "DD";
+                ctx.beginPath(); ctx.arc(x, y, this.r, 0, Math.PI * 2); ctx.fill();
+                ctx.lineWidth = 2; ctx.strokeStyle = this.color; ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 22px monospace';
+                ctx.fillText(this.symbol, x, y + 7);
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                const angle = Math.random() * Math.PI * 2;
+                const spd = Math.random() * 6 + 2;
+                this.vx = Math.cos(angle) * spd; this.vy = Math.sin(angle) * spd;
+                this.life = 1.0; this.decay = Math.random() * 0.03 + 0.02;
+            }
+            update() { this.x += this.vx; this.y += this.vy; this.vy += 0.2; this.life -= this.decay; }
+            draw(ctx) {
+                if (this.life <= 0) return;
+                ctx.globalAlpha = this.life; ctx.fillStyle = this.color;
+                ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        class FloatingText {
+            constructor(x, y, text, color, size=24) {
+                this.x = x; this.y = y; this.text = text; this.color = color;
+                this.life = 1.0; this.vy = -3; this.size = size;
+            }
+            update() { this.y += this.vy; this.life -= 0.015; }
+            draw(ctx) {
+                if (this.life <= 0) return;
+                ctx.globalAlpha = this.life; ctx.fillStyle = this.color;
+                ctx.font = `900 ${this.size}px monospace`;
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function initGame() {
+            if (animationId) cancelAnimationFrame(animationId);
+            score = 0; lives = 5; gameTime = 0;
+            balloons = []; particles = []; floatTexts = []; enemySpawnTimer = 0;
+            trail = []; rawPoints = []; isDrawing = false;
+            scoreEl.innerText = score;
+            livesEl.innerText = '❤️❤️❤️❤️❤️';
+            menuScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            gameState = 'PLAYING';
+            lastTime = performance.now();
+            loop(lastTime);
+        }
+
+        function gameOver() {
+            gameState = 'GAMEOVER';
+            finalScoreEl.innerText = score;
+            gameOverScreen.classList.remove('hidden');
+        }
+
+        function takeDamage() {
+            lives--;
+            livesEl.innerText = '❤️'.repeat(Math.max(0, lives));
+            damageFlash.style.opacity = 0.5;
+            setTimeout(() => damageFlash.style.opacity = 0, 100);
+            if (lives <= 0) gameOver();
+        }
+
+        function checkMatch(symbol) {
+            const matches = balloons.filter(b => b.symbol === symbol && !b.dead);
+            if (matches.length > 0) {
+                const count = matches.length;
+                const comboMult = count > 1 ? count * 2 : 1;
+                score += Math.floor(10 * count * comboMult);
+                scoreEl.innerText = score;
+                matches.forEach(b => {
+                    b.dead = true;
+                    for(let i=0; i<10; i++) particles.push(new Particle(b.renderX, b.y, b.color));
+                    floatTexts.push(new FloatingText(b.renderX, b.y, `+${Math.floor(10*comboMult)}`, '#fff'));
+                });
+            }
+        }
+
+        function getPos(e) {
+            if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            return { x: e.clientX, y: e.clientY };
+        }
+
+        function startStroke(e) {
+            if (gameState !== 'PLAYING') return;
+            isDrawing = true;
+            const p = getPos(e);
+            rawPoints = [p];
+            trail = [{x: p.x, y: p.y, life: 1.0}];
+            if(e.type === 'touchstart') e.preventDefault();
+        }
+
+        function moveStroke(e) {
+            if (!isDrawing) return;
+            const p = getPos(e);
+            const last = rawPoints[rawPoints.length - 1];
+            if (dist(last, p) > 5) {
+                rawPoints.push(p);
+                trail.push({x: p.x, y: p.y, life: 1.0});
+            }
+            if(e.type === 'touchmove') e.preventDefault();
+        }
+
+        function endStroke(e) {
+            if (!isDrawing) return;
+            isDrawing = false;
+            const symbol = recognize(rawPoints);
+            if (symbol) checkMatch(symbol);
+        }
+
+        canvas.addEventListener('mousedown', startStroke);
+        window.addEventListener('mousemove', moveStroke);
+        window.addEventListener('mouseup', endStroke);
+        canvas.addEventListener('touchstart', startStroke, {passive: false});
+        window.addEventListener('touchmove', moveStroke, {passive: false});
+        window.addEventListener('touchend', endStroke);
+
+        startBtn.onclick = () => initGame();
+        restartBtn.onclick = () => initGame();
+
+        function loop(timestamp) {
+            if (gameState !== 'PLAYING') return;
+            const dt = timestamp - lastTime;
+            lastTime = timestamp;
+            gameTime += dt;
+            ctx.clearRect(0, 0, width, height);
+            const interval = Math.max(400, 2200 - (gameTime / 1000) * 15);
+            enemySpawnTimer += dt;
+            if (enemySpawnTimer > interval) { balloons.push(new Balloon()); enemySpawnTimer = 0; }
+            balloons = balloons.filter(b => !b.dead);
+            balloons.forEach(b => { b.update(dt); b.draw(ctx); });
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => { p.update(); p.draw(ctx); });
+            floatTexts = floatTexts.filter(t => t.life > 0);
+            floatTexts.forEach(t => { t.update(); t.draw(ctx); });
+            if (trail.length > 0) {
+                ctx.lineWidth = 6; ctx.strokeStyle = '#00f3ff'; ctx.beginPath();
+                ctx.moveTo(trail[0].x, trail[0].y);
+                for (let i = 1; i < trail.length; i++) ctx.lineTo(trail[i].x, trail[i].y);
+                ctx.stroke();
+                if (!isDrawing) { trail.forEach(t => t.life -= 0.1); trail = trail.filter(t => t.life > 0); }
+            }
+            animationId = requestAnimationFrame(loop);
+        }
+    </script>
+</body>
+</html>

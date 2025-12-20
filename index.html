@@ -617,7 +617,7 @@
         <a href="#about">關於我</a>
         <a href="#experience">工作經歷</a>
         <a href="#skills">技能</a>
-        <a href="#audio">專案/作品集</a>
+        <a href="#projectTitle">專案作品</a>
         <a href="#gallery">旅行照片</a>
         <a href="#more">其他</a>
       </nav>
@@ -637,10 +637,10 @@
     <div class="menu" id="mobileMenu" hidden>
       <div class="container menu-inner" role="navigation" aria-label="主要導覽（行動裝置）">
         <a href="#about">關於我</a>
-        <a href="#experience">工作經歷</a>
+        <a href="#experience">經歷</a>
         <a href="#skills">技能</a>
-        <a href="#audio">專案/作品集</a>
-        <a href="#gallery">旅行照片</a>
+        <a href="#projectTitle">作品</a>
+        <a href="#gallery">照片</a>
         <a href="#more">其他</a>
         <a href="#contact">聯絡我</a>
       </div>
@@ -665,7 +665,7 @@
         <h1 id="heroTitle">用極簡的設計，呈現我的經歷與作品</h1>
 
         <div class="hero-cta">
-          <a class="btn primary" href="#audio">查看作品</a>
+          <a class="btn primary" href="#projectTitle">查看作品</a>
           <a class="btn" href="#about">認識我</a>
         </div>
       </div>
@@ -808,25 +808,13 @@
         <div class="divider" role="separator" aria-hidden="true"></div>
 
         <!-- AUDIO + VIDEO -->
-        <section aria-labelledby="mediaTitle">
+        <section aria-labelledby="projectTitle">
           <div class="section-head">
-            <h2 id="mediaTitle">專案/作品集</h2>
+            <h2 id="projectTitle">專案作品集</h2>
             <p>過去課堂中完成的音訊與影視作品展示。</p>
           </div>
 
           <div class="media-grid">
-            <article class="card media-card" id="audio" aria-labelledby="audioTitle">
-              <h3 id="audioTitle" style="margin:0 0 .6rem;">音訊作品</h3>
-              <p class="muted" style="margin:0 0 .9rem;">
-                將音樂作品直接嵌入，支援鍵盤操作。
-              </p>
-              <audio controls preload="none">
-                <!-- 改為你的作品 -->
-                <source src="assets/audio/suno%20music.mp3" type="audio/mpeg" />
-                您的瀏覽器不支援 audio 播放。
-              </audio>
-            </article>
-
             <article class="card media-card" id="video" aria-labelledby="videoTitle">
               <h3 id="videoTitle" style="margin:0 0 .6rem;">影視作品預覽</h3>
               <p class="muted" style="margin:0 0 .9rem;">
@@ -843,6 +831,47 @@
                 </a>
               </p>
             </article>
+
+            <article class="card media-card" id="video" aria-labelledby="videoTitle">
+              <h3 id="videoTitle" style="margin:0 0 .6rem;">影視作品預覽</h3>
+              <p class="muted" style="margin:0 0 .9rem;">
+                使用AI生成公園散步影片。
+              </p>
+              <video controls preload="none">
+                <!-- 改為你的作品 -->
+                <source src="assets/video/AI park.mp4" type="video/mp4" />
+                您的瀏覽器不支援 video 播放。
+              </video>
+            </article>
+            
+            <div style="grid-column: span 2;">
+              <article class="card media-card" id="audio" aria-labelledby="audioTitle">
+                <h3 id="audioTitle" style="margin:0 0 .6rem;">音訊作品</h3>
+                <p class="muted" style="margin:0 0 .9rem;">
+                  將音樂作品直接嵌入，支援鍵盤操作。
+                </p>
+                <audio controls preload="none">
+                  <!-- 改為你的作品 -->
+                  <source src="assets/audio/suno%20music.mp3" type="audio/mpeg" />
+                  您的瀏覽器不支援 audio 播放。
+                </audio>
+              </article>
+            </div>
+            
+            <div style="grid-column: span 2;">
+              <article class="card media-card" id="game" aria-labelledby="gameTitle">
+                <h3 id="gameTitle" style="margin:0 0 .6rem;">簡易網頁遊戲</h3>
+                <p class="muted" style="margin:0 0 .9rem;">
+                  參考 Magic touch 製作的簡易網頁遊戲。
+                </p>
+                <iframe src="assets/game/magic_runes.html" title="簡易網頁遊戲" loading="lazy" style="width:100%; height:700px; border:none; border-radius:12px;"></iframe>
+                <p style="margin:.9rem 0 0;">
+                  <a class="btn" href="https://gemini.google.com/share/5c5e50b244b6" target="_blank" rel="noopener noreferrer">
+                    點我開啟新分頁遊玩
+                  </a>
+                </p>
+              </article>
+            </div>
           </div>
         </section>
 
@@ -1082,5 +1111,3 @@
   </script>
 </body>
 </html>
-
-
